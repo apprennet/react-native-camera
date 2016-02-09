@@ -601,10 +601,10 @@ RCT_EXPORT_METHOD(hasFlash:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRej
     [self initializeCaptureSessionInput:AVMediaTypeAudio];
   }
 
-  if ([options valueForKey:@"quality"]) {
-      // TODO this needs to be fixed, this is just for testing purposes
-      self.session.sessionPreset = AVCaptureSessionPresetHigh;
-  }
+//  if ([options valueForKey:@"quality"]) {
+//      // TODO this needs to be fixed, this is just for testing purposes
+//      self.session.sessionPreset = AVCaptureSessionPresetHigh;
+//  }
 
   Float64 totalSeconds = [[options valueForKey:@"totalSeconds"] floatValue];
   if (totalSeconds > -1) {
