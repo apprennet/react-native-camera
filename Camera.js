@@ -60,6 +60,10 @@ export default class Camera extends Component {
       PropTypes.string,
       PropTypes.number
     ]),
+    captureQuality: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number
+    ]),
     captureTarget: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.number
@@ -92,8 +96,15 @@ export default class Camera extends Component {
     type: CameraManager.Type.back,
     orientation: CameraManager.Orientation.auto,
     captureAudio: true,
+<<<<<<< HEAD
     captureMode: CameraManager.CaptureMode.still,
     captureTarget: CameraManager.CaptureTarget.cameraRoll,
+=======
+    captureMode: Camera.constants.CaptureMode.still,
+    captureQuality: Camera.constants.CaptureQuality.high,
+    captureTarget: Camera.constants.CaptureTarget.cameraRoll,
+    quality: Camera.constants.CaptureQuality.high
+>>>>>>> 31449e6... added a way to customize video quality
     defaultOnFocusComponent: true,
     flashMode: CameraManager.FlashMode.off,
     torchMode: CameraManager.TorchMode.off
@@ -146,6 +157,7 @@ export default class Camera extends Component {
       type: props.type,
       title: '',
       description: '',
+      quality: props.captureQuality
       ...options
     };
 

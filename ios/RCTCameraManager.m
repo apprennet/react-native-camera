@@ -69,6 +69,11 @@ RCT_EXPORT_VIEW_PROPERTY(keepAwake, BOOL);
                @"still": @(RCTCameraCaptureModeStill),
                @"video": @(RCTCameraCaptureModeVideo)
                },
+           @"CaptureQuality": @{
+               @"low": AVCaptureSessionPresetLow,
+               @"medium": AVCaptureSessionPresetMedium,
+               @"high": AVCaptureSessionPresetHigh
+               },
            @"CaptureTarget": @{
                @"memory": @(RCTCameraCaptureTargetMemory),
                @"disk": @(RCTCameraCaptureTargetDisk),
@@ -136,7 +141,7 @@ RCT_EXPORT_VIEW_PROPERTY(onZoomChanged, BOOL)
   if ((self = [super init])) {
 
     self.session = [AVCaptureSession new];
-    self.session.sessionPreset = AVCaptureSessionPresetHigh;
+    self.session.sessionPreset = AVCaptureSessionPresetHigh; 
 
     self.previewLayer = [AVCaptureVideoPreviewLayer layerWithSession:self.session];
     self.previewLayer.needsDisplayOnBoundsChange = YES;
@@ -526,18 +531,18 @@ RCT_EXPORT_METHOD(hasFlash:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRej
   else if (target == RCTCameraCaptureTargetDisk) {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths firstObject];
-      
+
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSString *fullPath = [[documentsDirectory stringByAppendingPathComponent:[[NSUUID UUID] UUIDString]] stringByAppendingPathExtension:@"jpg"];
-    
+
     [fileManager createFileAtPath:fullPath contents:imageData attributes:nil];
     responseString = fullPath;
   }
-    
+
   else if (target == RCTCameraCaptureTargetTemp) {
     NSString *fileName = [[NSProcessInfo processInfo] globallyUniqueString];
     NSString *fullPath = [NSString stringWithFormat:@"%@%@.jpg", NSTemporaryDirectory(), fileName];
-      
+
     [imageData writeToFile:fullPath atomically:YES];
     responseString = fullPath;
   }
@@ -594,6 +599,11 @@ RCT_EXPORT_METHOD(hasFlash:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRej
 
   if ([options valueForKey:@"audio"]) {
     [self initializeCaptureSessionInput:AVMediaTypeAudio];
+  }
+
+  if ([options valueForKey:@"quality"]) {
+      // TODO this needs to be fixed, this is just for testing purposes
+      self.session.sessionPreset = AVCaptureSessionPresetHigh;
   }
 
   Float64 totalSeconds = [[options valueForKey:@"totalSeconds"] floatValue];
@@ -677,10 +687,10 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
   else if (self.videoTarget == RCTCameraCaptureTargetTemp) {
     NSString *fileName = [[NSProcessInfo processInfo] globallyUniqueString];
     NSString *fullPath = [NSString stringWithFormat:@"%@%@.mov", NSTemporaryDirectory(), fileName];
-    
+
     NSFileManager * fileManager = [NSFileManager defaultManager];
     NSError * error = nil;
-      
+
     //copying destination
     if (!([fileManager copyItemAtPath:[outputFileURL path] toPath:fullPath error:&error])) {
         self.videoReject(RCTErrorUnspecified, nil, RCTErrorWithMessage(error.description));
@@ -698,7 +708,7 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
   for (AVMetadataMachineReadableCodeObject *metadata in metadataObjects) {
     for (id barcodeType in [self getBarCodeTypes]) {
       if (metadata.type == barcodeType) {
-        
+
         NSDictionary *event = @{
           @"type": metadata.type,
           @"data": metadata.stringValue,
@@ -828,7 +838,7 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
           @"zoomFactor": [NSNumber numberWithDouble:zoomFactor],
           @"velocity": [NSNumber numberWithDouble:velocity]
         };
-      
+
         [self.bridge.eventDispatcher sendInputEventWithName:@"zoomChanged" body:event];
 
         device.videoZoomFactor = zoomFactor;
