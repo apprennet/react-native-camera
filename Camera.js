@@ -30,7 +30,7 @@ function convertStringProps(props) {
   }
 
   if (typeof props.type === 'string') {
-    newProps.type = Camera.constants.Type[props.type];
+    newProps.type = Camera.constants.CaptureQuality[props.captureQuality];
   }
 
   return newProps;
@@ -57,6 +57,10 @@ export default class Camera extends Component {
     ]),
     captureAudio: PropTypes.bool,
     captureMode: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number
+    ]),
+    captureQuality: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.number
     ]),
@@ -94,6 +98,9 @@ export default class Camera extends Component {
     captureAudio: true,
     captureMode: CameraManager.CaptureMode.still,
     captureTarget: CameraManager.CaptureTarget.cameraRoll,
+    captureMode: Camera.constants.CaptureMode.still,
+    captureQuality: Camera.constants.CaptureQuality.high,
+    captureTarget: Camera.constants.CaptureTarget.cameraRoll,
     defaultOnFocusComponent: true,
     flashMode: CameraManager.FlashMode.off,
     torchMode: CameraManager.TorchMode.off
@@ -146,6 +153,7 @@ export default class Camera extends Component {
       type: props.type,
       title: '',
       description: '',
+      quality: props.captureQuality
       ...options
     };
 
