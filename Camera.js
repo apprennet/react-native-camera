@@ -30,7 +30,7 @@ function convertStringProps(props) {
   }
 
   if (typeof props.type === 'string') {
-    newProps.type = Camera.constants.Type[props.type];
+    newProps.type = Camera.constants.CaptureQuality[props.captureQuality];
   }
 
   return newProps;
